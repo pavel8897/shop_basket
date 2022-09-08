@@ -7,7 +7,7 @@ import {GoodsList} from './GoodList'
 export const Shop = () => {
     const [goods, setGoods] = useState([])
     const [loading, setLoading] = useState(true)
-
+    
     useEffect(function getGoods() {
         fetch(API_URL, {
             headers: {
