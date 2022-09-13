@@ -5,12 +5,14 @@ import {Preloader} from '../components/Preloader'
 import {GoodsList} from './GoodList'
 import {Cart} from './Cart'
 import {BasketList} from './BasketList'
+import {Alert} from './Alert'
 
 export const Shop = () => {
     const [goods, setGoods] = useState([])
     const [loading, setLoading] = useState(true)
     const [order, setOrder] = useState([])
     const [isBasketShow, setBasketShow] = useState(false)
+    const [alertName, setAlertName] = useState('')
 
     const addToBasket = (item) => {
         const itemIndex = order.findIndex(
@@ -36,10 +38,50 @@ export const Shop = () => {
             })
             setOrder(newOrder)
         }
+        setAlertName(item.name)
+    }
+
+    const removeToBasket = (itemId) => {
+        const newOrder = order.filter(item => item.id !== itemId)
+        setOrder(newOrder)
+    }
+
+    const incQuantity = (itemId) => {
+        const newOrder = order.map(el => {
+            if(el.id === itemId) {
+                const newQuantity = el.quantity + 1
+                return {
+                    ...el,
+                    quantity: newQuantity
+                }
+            } else {
+                return el
+            }
+        })
+        setOrder(newOrder)
+    }
+
+    const decQuantity = (itemId) => {
+        const newOrder = order.map(el => {
+            if(el.id === itemId) {
+                const newQuantity = el.quantity - 1
+                return {
+                    ...el,
+                    quantity: newQuantity >= 0 ? newQuantity : 0 
+                }
+            } else {
+                return el
+            }
+        })
+        setOrder(newOrder)
     }
 
     const handleBasketShow = () => {
         setBasketShow(!isBasketShow)
+    }
+
+    const closeAlert = () => {
+        setAlertName('')
     }
     
     useEffect(function getGoods() {
@@ -55,10 +97,31 @@ export const Shop = () => {
 
     return (
         <main className="container content">
-            <Cart quantity={order.length} handleBasketShow={handleBasketShow} />
-            {loading ? <Preloader /> : <GoodsList goods={goods} addToBasket={addToBasket} />}
+            <Cart
+                quantity={order.length}
+                handleBasketShow={handleBasketShow}
+            />
+            {loading ?
+                <Preloader /> :
+                <GoodsList
+                    goods={goods}
+                    addToBasket={addToBasket}
+            />}
+            
             {
-                isBasketShow && <BasketList order={order} />
+                isBasketShow && <BasketList
+                    order={order}
+                    removeToBasket={removeToBasket}
+                    incQuantity={incQuantity}
+                    decQuantity={decQuantity}
+                    handleBasketShow={handleBasketShow}
+                />
+            }
+            {
+                alertName && <Alert
+                    name={alertName}
+                    closeAlert={closeAlert}
+                />
             }
         </main>
     )

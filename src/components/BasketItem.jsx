@@ -1,9 +1,20 @@
 export const BasketItem = (props) => {
-    const {id, name, price, quanity} = props
+    const {
+        id, name, price, quantity,
+        removeToBasket = Function.prototype,
+        incQuantity=Function.prototype,
+        decQuantity=Function.prototype
+    } = props
     return <li href="#!" className="collection-item">
-        {name} x{quanity} = {price}
-        <span href="#!" class="secondary-content">
-            <i class="material-icons">close</i>
+            {name}  <i class="material-icons basket-quantity" onClick={() => decQuantity(id)}>remove</i>
+                    x{quantity}
+                    <i class="material-icons basket-quantity" onClick={() => incQuantity(id)}>add</i>
+                    = {price * quantity} руб                    
+            <span href="#!"
+                className="secondary-content" 
+                onClick={() => removeToBasket(id)}
+            >
+            <i class="material-icons basket-delete">close</i>
         </span>
     </li>
 }
